@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parts of a Computer - Learning & Fun Games</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Fredoka & Lexend for young children -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Lexend:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Fredoka', cursive, sans-serif;
+            background-color: #f0f9ff;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .font-heading {
+            font-family: 'Lexend', sans-serif;
+        }
+        /* 3D Flip Card Animation */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+        .card-inner {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        /* Animations */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(2deg); }
+        }
+        .animate-float {
+            animation: floatSlow 3s ease-in-out infinite;
+        }
+        @keyframes pop {
+            0% { transform: scale(0.9); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .animate-pop {
+            animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-800 bg-sky-100 antialiased">
+
+    <!-- Header Section -->
+    <header class="bg-white border-b-8 border-sky-300 sticky top-0 z-50 shadow-md">
+        <div class="max-w-6xl mx-auto px-4 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-14 h-14 rounded-3xl bg-indigo-500 text-white flex items-center justify-center text-3xl shadow-lg border-4 border-indigo-200 animate-float">
+                    💻
+                </div>
+                <div>
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-indigo-900 tracking-wide">Parts of a Computer</h1>
+                    <p class="text-lg text-indigo-600 font-bold">Touch, Learn & Play!</p>
+                </div>
+            </div>
+
+            <!-- Mode Buttons -->
+            <div class="flex items-center gap-2 bg-sky-200 p-2 rounded-3xl border-4 border-sky-300">
+                <button id="btn-mode-learn" onclick="switchMode('learn')" class="px-5 py-3 rounded-2xl font-black text-xl sm:text-2xl transition-all duration-200 flex items-center gap-2 bg-indigo-600 text-white shadow-lg active:scale-95">
+                    📖 Learn
+                </button>
+                <button id="btn-mode-match" onclick="switchMode('match')" class="px-5 py-3 rounded-2xl font-black text-xl sm:text-2xl transition-all duration-200 flex items-center gap-2 bg-sky-200 text-indigo-900 hover:bg-sky-300 active:scale-95">
+                    🧩 Match
+                </button>
+                <button id="btn-mode-quiz" onclick="switchMode('quiz')" class="px-5 py-3 rounded-2xl font-black text-xl sm:text-2xl transition-all duration-200 flex items-center gap-2 bg-sky-200 text-indigo-900 hover:bg-sky-300 active:scale-95">
+                    🎮 Quiz
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-6xl mx-auto px-4 py-6 sm:py-8 flex-grow w-full">
+
+        <!-- ================= 1. LEARN MODE ================= -->
+        <section id="mode-learn" class="block space-y-6">
+            <div class="bg-amber-100 border-4 border-amber-300 rounded-3xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left shadow-md">
+                <div class="flex items-center gap-3">
+                    <span class="text-4xl">👉</span>
+                    <p class="text-xl sm:text-2xl text-amber-900 font-extrabold">
+                        Tap any card to flip it! Tap 🔊 to listen!
+                    </p>
+                </div>
+                <button onclick="resetCards()" class="px-6 py-2.5 bg-white text-amber-800 border-4 border-amber-300 rounded-2xl font-black text-lg hover:bg-amber-200 transition-colors shadow-sm active:scale-95 shrink-0">
+                    🔄 Flip Back All
+                </button>
+            </div>
+
+            <!-- 3x3 Card Grid -->
+            <div id="cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Dynamically Populated -->
+            </div>
+        </section>
+
+
+        <!-- ================= 2. MATCHING GAME MODE ================= -->
+        <section id="mode-match" class="hidden space-y-6">
+            <div class="bg-purple-100 border-4 border-purple-300 rounded-3xl p-4 text-center shadow-md flex items-center justify-between px-6">
+                <p class="text-2xl text-purple-900 font-extrabold flex items-center gap-2">
+                    <span>🧩</span> Match the Name to the Picture!
+                </p>
+                <button onclick="startMatchGame()" class="px-5 py-2 bg-purple-600 text-white rounded-2xl font-bold text-lg hover:bg-purple-700 shadow-md">
+                    🔄 Reset Game
+                </button>
+            </div>
+
+            <div id="match-game-area" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Left Column: Names -->
+                <div class="bg-white border-4 border-slate-200 rounded-3xl p-6 shadow-xl space-y-4">
+                    <h3 class="text-2xl font-black text-slate-700 text-center border-b-4 border-slate-100 pb-3">1. Tap a Name</h3>
+                    <div id="match-names-container" class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-3">
+                        <!-- Dynamically populated name buttons -->
+                    </div>
+                </div>
+
+                <!-- Right Column: Pictures -->
+                <div class="bg-white border-4 border-slate-200 rounded-3xl p-6 shadow-xl space-y-4">
+                    <h3 class="text-2xl font-black text-slate-700 text-center border-b-4 border-slate-100 pb-3">2. Tap its Picture</h3>
+                    <div id="match-pictures-container" class="grid grid-cols-3 gap-4">
+                        <!-- Dynamically populated picture cards -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Matching Game Feedback Banner -->
+            <div id="match-feedback" class="hidden p-4 rounded-3xl text-center text-2xl font-black border-4 shadow-lg animate-pop"></div>
+        </section>
+
+
+        <!-- ================= 3. QUIZ MODE ================= -->
+        <section id="mode-quiz" class="hidden max-w-3xl mx-auto space-y-6">
+            <!-- Quiz Card Box -->
+            <div id="quiz-card" class="bg-white border-8 border-indigo-200 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 relative">
+                
+                <!-- Progress & Score -->
+                <div class="flex items-center justify-between border-b-4 border-slate-100 pb-4">
+                    <span id="quiz-badge" class="px-4 py-2 bg-indigo-100 text-indigo-900 font-black text-xl rounded-2xl border-2 border-indigo-300">
+                        Question <span id="q-num">1</span> of 9
+                    </span>
+                    <div class="text-2xl font-black text-amber-500 flex items-center gap-2">
+                        ⭐ Stars: <span id="star-count" class="text-3xl font-extrabold">0</span>
+                    </div>
+                </div>
+
+                <!-- Question Header -->
+                <div class="space-y-4 text-center">
+                    <div class="flex items-center justify-center gap-3">
+                        <h2 id="quiz-question-text" class="text-2xl sm:text-3xl font-extrabold text-slate-800 leading-snug">
+                            Question text here?
+                        </h2>
+                        <button onclick="speakText(document.getElementById('quiz-question-text').innerText)" class="w-12 h-12 rounded-2xl bg-amber-400 hover:bg-amber-500 text-white flex items-center justify-center text-xl shadow-md active:scale-95 shrink-0" title="Listen to question">
+                            🔊
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3 Large Choice Buttons -->
+                <div id="quiz-options-container" class="grid grid-cols-1 gap-4 pt-2">
+                    <!-- Dynamically Populated 3 Options -->
+                </div>
+
+                <!-- Visual Feedback Box -->
+                <div id="quiz-feedback-box" class="hidden p-5 rounded-3xl text-center text-2xl font-black border-4 shadow-md animate-pop">
+                    <!-- Dynamic Feedback Message -->
+                </div>
+
+                <!-- Next Button -->
+                <div class="flex justify-end pt-2">
+                    <button id="btn-quiz-next" onclick="nextQuizQuestion()" class="hidden px-8 py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-2xl rounded-2xl shadow-xl active:scale-95 flex items-center gap-3">
+                        Next ➡️
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quiz Results Screen (Hidden initially) -->
+            <div id="quiz-results-screen" class="hidden bg-white border-8 border-indigo-200 rounded-3xl p-8 text-center shadow-2xl space-y-6">
+                <div class="text-7xl animate-bounce">🏆</div>
+                <h2 class="text-4xl font-extrabold text-indigo-900">Great Job!</h2>
+                <div class="text-3xl font-black text-slate-700">
+                    You earned <span id="final-stars" class="text-amber-500 text-4xl">0</span> Stars! ⭐
+                </div>
+                <div id="results-stars-display" class="flex justify-center gap-2 text-4xl flex-wrap py-2">
+                    <!-- Star icons rendered here -->
+                </div>
+                <p id="results-message" class="text-2xl font-bold text-indigo-600">
+                    You are super smart! 🌟
+                </p>
+                <button onclick="startQuiz()" class="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-2xl rounded-3xl shadow-xl active:scale-95 inline-flex items-center gap-3">
+                    🔄 Play Again!
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Simple Footer -->
+    <footer class="bg-white border-t-4 border-slate-200 py-3 text-center text-slate-500 font-bold text-base">
+        Parts of a Computer • Made for Early Learners (Grades 1-3)
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Data structure for the 9 parts with simplified content and colors matching the request
+        const partsData = [
+            {
+                id: 1,
+                name: "CPU",
+                shortName: "CPU",
+                emoji: "🧠",
+                color: "bg-blue-500",
+                borderColor: "border-blue-400",
+                lightBg: "bg-blue-50",
+                textColor: "text-blue-900",
+                badgeBg: "bg-blue-100 text-blue-800",
+                functionText: "It helps the computer think.",
+                analogyText: "Like your brain helps you think.",
+                question: "Which part is the brain of the computer?",
+                options: ["CPU", "Speakers", "Keyboard"],
+                correctAnswer: 0
+            },
+            {
+                id: 2,
+                name: "Memory (RAM)",
+                shortName: "RAM",
+                emoji: "📝",
+                color: "bg-emerald-500",
+                borderColor: "border-emerald-400",
+                lightBg: "bg-emerald-50",
+                textColor: "text-emerald-900",
+                badgeBg: "bg-emerald-100 text-emerald-800",
+                functionText: "It holds quick work for now.",
+                analogyText: "Like your desk while doing homework.",
+                question: "What holds quick work for now?",
+                options: ["Monitor", "Memory (RAM)", "Case"],
+                correctAnswer: 1
+            },
+            {
+                id: 3,
+                name: "Hard Drive (SSD)",
+                shortName: "Hard Drive",
+                emoji: "📁",
+                color: "bg-amber-500",
+                borderColor: "border-amber-400",
+                lightBg: "bg-amber-50",
+                textColor: "text-amber-900",
+                badgeBg: "bg-amber-100 text-amber-800",
+                functionText: "It saves your files forever.",
+                analogyText: "Like a big box for toys.",
+                question: "Where do your files stay safe forever?",
+                options: ["Speakers", "Hard Drive (SSD)", "CPU"],
+                correctAnswer: 1
+            },
+            {
+                id: 4,
+                name: "Motherboard",
+                shortName: "Motherboard",
+                emoji: "🛣️",
+                color: "bg-purple-500",
+                borderColor: "border-purple-400",
+                lightBg: "bg-purple-50",
+                textColor: "text-purple-900",
+                badgeBg: "bg-purple-100 text-purple-800",
+                functionText: "It connects all parts together.",
+                analogyText: "Like roads connecting houses.",
+                question: "Which part connects all parts together?",
+                options: ["Motherboard", "Keyboard", "Monitor"],
+                correctAnswer: 0
+            },
+            {
+                id: 5,
+                name: "Monitor",
+                shortName: "Monitor",
+                emoji: "🖥️",
+                color: "bg-pink-500",
+                borderColor: "border-pink-400",
+                lightBg: "bg-pink-50",
+                textColor: "text-pink-900",
+                badgeBg: "bg-pink-100 text-pink-800",
+                functionText: "It shows pictures and words.",
+                analogyText: "Like a TV screen.",
+                question: "What part shows pictures on screen?",
+                options: ["CPU", "Power Supply", "Monitor"],
+                correctAnswer: 2
+            },
+            {
+                id: 6,
+                name: "Keyboard",
+                shortName: "Keyboard",
+                emoji: "⌨️",
+                color: "bg-blue-600",
+                borderColor: "border-blue-500",
+                lightBg: "bg-blue-50",
+                textColor: "text-blue-900",
+                badgeBg: "bg-blue-100 text-blue-800",
+                functionText: "It lets you type letters.",
+                analogyText: "Like a digital pencil.",
+                question: "What do you use to type letters?",
+                options: ["Keyboard", "Speakers", "Hard Drive"],
+                correctAnswer: 0
+            },
+            {
+                id: 7,
+                name: "Speakers",
+                shortName: "Speakers",
+                emoji: "🔊",
+                color: "bg-emerald-600",
+                borderColor: "border-emerald-500",
+                lightBg: "bg-emerald-50",
+                textColor: "text-emerald-900",
+                badgeBg: "bg-emerald-100 text-emerald-800",
+                functionText: "It makes music and sounds.",
+                analogyText: "Like a singing mouth.",
+                question: "Which part plays music and sounds?",
+                options: ["Motherboard", "Speakers", "RAM"],
+                correctAnswer: 1
+            },
+            {
+                id: 8,
+                name: "Power Supply",
+                shortName: "Power Supply",
+                emoji: "⚡",
+                color: "bg-amber-600",
+                borderColor: "border-amber-500",
+                lightBg: "bg-amber-50",
+                textColor: "text-amber-900",
+                badgeBg: "bg-amber-100 text-amber-800",
+                functionText: "It gives power to everything.",
+                analogyText: "Like food for the computer.",
+                question: "Which part gives power to the computer?",
+                options: ["Monitor", "Case", "Power Supply"],
+                correctAnswer: 2
+            },
+            {
+                id: 9,
+                name: "Case",
+                shortName: "Case",
+                emoji: "📦",
+                color: "bg-purple-600",
+                borderColor: "border-purple-500",
+                lightBg: "bg-purple-50",
+                textColor: "text-purple-900",
+                badgeBg: "bg-purple-100 text-purple-800",
+                functionText: "It protects all inside parts.",
+                analogyText: "Like strong metal armor.",
+                question: "What protects all the parts inside?",
+                options: ["Case", "Keyboard", "CPU"],
+                correctAnswer: 0
+            }
+        ];
+
+        // Global State Variables
+        let activeMode = 'learn';
+        let currentQuizIndex = 0;
+        let starScore = 0;
+        let quizAnswered = false;
+
+        // Matching Game State Variables
+        let selectedMatchNameId = null;
+
+        // Speech Synthesis Helper
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop ongoing speech
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.9; // Slightly slower speed for children
+                utterance.pitch = 1.1; // Friendly pitch
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Render Learn Cards
+        function renderLearnCards() {
+            const container = document.getElementById('cards-grid');
+            container.innerHTML = '';
+
+            partsData.forEach((part) => {
+                const cardHTML = `
+                    <div class="card perspective-1000 h-80 cursor-pointer group" onclick="toggleCardFlip(this, event)">
+                        <div class="card-inner relative w-full h-full transform-style-3d shadow-xl rounded-3xl transition-all duration-300">
+                            
+                            <!-- FRONT OF CARD -->
+                            <div class="backface-hidden absolute inset-0 bg-white border-4 ${part.borderColor} rounded-3xl p-6 flex flex-col justify-between items-center text-center">
+                                <div class="w-full flex justify-between items-center">
+                                    <span class="w-10 h-10 rounded-2xl ${part.color} text-white font-black text-xl flex items-center justify-center shadow-md">
+                                        ${part.id}
+                                    </span>
+                                    <span class="text-sm font-bold ${part.badgeBg} px-3 py-1 rounded-full">
+                                        Tap to Flip 🔄
+                                    </span>
+                                </div>
+
+                                <div class="my-auto flex flex-col items-center">
+                                    <div class="text-7xl mb-3 animate-float">
+                                        ${part.emoji}
+                                    </div>
+                                    <h3 class="text-2xl sm:text-3xl font-extrabold ${part.textColor}">${part.name}</h3>
+                                </div>
+
+                                <div class="w-full flex justify-between items-center pt-2">
+                                    <span class="text-sm text-slate-400 font-bold">Grade 1-3</span>
+                                    <button onclick="event.stopPropagation(); speakText('${part.name}')" class="px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white rounded-2xl font-bold flex items-center gap-1 shadow-sm active:scale-95 text-lg" title="Listen to name">
+                                        🔊 Listen
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- BACK OF CARD -->
+                            <div class="backface-hidden rotate-y-180 absolute inset-0 ${part.lightBg} border-4 ${part.borderColor} rounded-3xl p-5 flex flex-col justify-between text-left">
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between border-b-2 border-slate-200 pb-2">
+                                        <span class="text-xl font-black ${part.textColor}">${part.name}</span>
+                                        <button onclick="event.stopPropagation(); speakText('${part.name}. What does it do? ${part.functionText} Like this: ${part.analogyText}')" class="px-3 py-1.5 bg-amber-400 hover:bg-amber-500 text-white rounded-xl font-bold text-base flex items-center gap-1 shadow-sm active:scale-95" title="Listen to all info">
+                                            🔊 Listen All
+                                        </button>
+                                    </div>
+
+                                    <div class="space-y-3">
+                                        <div class="bg-white p-3 rounded-2xl border-2 border-slate-100 shadow-sm">
+                                            <p class="text-lg font-black text-indigo-900">What does it do?</p>
+                                            <p class="text-xl font-bold text-slate-700 leading-snug">${part.functionText}</p>
+                                        </div>
+
+                                        <div class="bg-white p-3 rounded-2xl border-2 border-slate-100 shadow-sm">
+                                            <p class="text-lg font-black text-amber-900">Like this:</p>
+                                            <p class="text-xl font-bold text-slate-700 leading-snug">${part.analogyText}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="text-center pt-1">
+                                    <span class="text-xs font-bold text-slate-400">Tap anywhere to flip back</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHTML;
+            });
+        }
+
+        // Toggle Flip Status
+        function toggleCardFlip(cardElement, event) {
+            cardElement.classList.toggle('flipped');
+        }
+
+        // Reset all card flips
+        function resetCards() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(c => c.classList.remove('flipped'));
+        }
+
+        // Switch Modes (Learn, Match, Quiz)
+        function switchMode(mode) {
+            activeMode = mode;
+            document.getElementById('mode-learn').classList.add('hidden');
+            document.getElementById('mode-match').classList.add('hidden');
+            document.getElementById('mode-quiz').classList.add('hidden');
+
+            const btnLearn = document.getElementById('btn-mode-learn');
+            const btnMatch = document.getElementById('btn-mode-match');
+            const btnQuiz = document.getElementById('btn-mode-quiz');
+
+            btnLearn.className = "px-5 py-3 rounded-2xl font-black text-xl sm:text-2xl transition-all duration-200 flex items-center gap-2 bg-sky-200 text-indigo-900 hover:bg-sky-300 active:scale-95";
+            btnMatch.className = "px-5 py-3 rounded-2xl font-black text-xl sm:text-2xl transition-all duration-200 flex items-center gap-2 bg-sky-200 text-indigo-900 hover:bg-sky-300 active:scale-95";
+            btnQuiz.className = "px-5 py-3 rounded-2xl font-black text-xl sm:text-2xl transition-all duration-200 flex items-center gap-2 bg-sky-200 text-indigo-900 hover:bg-sky-300 active:scale-95";
+
+            if (mode === 'learn') {
+                document.getElementById('mode-learn').classList.remove('hidden');
+                btnLearn.className = "px-5 py-3 rounded-2xl font-black text-xl sm:text-2xl transition-all duration-200 flex items-center gap-2 bg-indigo-600 text-white shadow-lg active:scale-95";
+            } else if (mode === 'match') {
+                document.getElementById('mode-match').classList.remove('hidden');
+                btnMatch.className = "px-5 py-3 rounded-2xl font-black text-xl sm:text-2xl transition-all duration-200 flex items-center gap-2 bg-indigo-600 text-white shadow-lg active:scale-95";
+                startMatchGame();
+            } else if (mode === 'quiz') {
+                document.getElementById('mode-quiz').classList.remove('hidden');
+                btnQuiz.className = "px-5 py-3 rounded-2xl font-black text-xl sm:text-2xl transition-all duration-200 flex items-center gap-2 bg-indigo-600 text-white shadow-lg active:scale-95";
+                startQuiz();
+            }
+        }
+
+        // ================= MATCHING GAME LOGIC =================
+        let matchedIds = [];
+
+        function startMatchGame() {
+            selectedMatchNameId = null;
+            matchedIds = [];
+            document.getElementById('match-feedback').className = "hidden p-4 rounded-3xl text-center text-2xl font-black border-4 shadow-lg";
+
+            // Render shuffled names on left
+            const namesContainer = document.getElementById('match-names-container');
+            namesContainer.innerHTML = '';
+            const shuffledPartsForNames = [...partsData].sort(() => 0.5 - Math.random());
+
+            shuffledPartsForNames.forEach(part => {
+                const btn = document.createElement('button');
+                btn.id = `match-name-${part.id}`;
+                btn.className = "w-full p-4 rounded-2xl border-4 border-slate-200 bg-slate-50 hover:bg-indigo-50 font-black text-xl text-slate-800 transition-all flex items-center justify-between shadow-sm active:scale-95";
+                btn.onclick = () => selectMatchName(part.id);
+                btn.innerHTML = `<span>${part.name}</span> <span class="text-amber-500">🔊</span>`;
+                namesContainer.appendChild(btn);
+            });
+
+            // Render shuffled pictures on right
+            const picsContainer = document.getElementById('match-pictures-container');
+            picsContainer.innerHTML = '';
+            const shuffledPartsForPics = [...partsData].sort(() => 0.5 - Math.random());
+
+            shuffledPartsForPics.forEach(part => {
+                const btn = document.createElement('button');
+                btn.id = `match-pic-${part.id}`;
+                btn.className = "p-4 rounded-2xl border-4 border-slate-200 bg-white hover:border-indigo-400 flex flex-col items-center justify-center transition-all shadow-sm active:scale-95 aspect-square";
+                btn.onclick = () => selectMatchPicture(part.id);
+                btn.innerHTML = `<span class="text-5xl">${part.emoji}</span>`;
+                picsContainer.appendChild(btn);
+            });
+        }
+
+        function selectMatchName(id) {
+            if (matchedIds.includes(id)) return;
+
+            selectedMatchNameId = id;
+            const part = partsData.find(p => p.id === id);
+            speakText(part.name);
+
+            // Highlight selected name button
+            partsData.forEach(p => {
+                const btn = document.getElementById(`match-name-${p.id}`);
+                if (btn && !matchedIds.includes(p.id)) {
+                    if (p.id === id) {
+                        btn.className = "w-full p-4 rounded-2xl border-4 border-indigo-500 bg-indigo-100 font-black text-xl text-indigo-900 transition-all flex items-center justify-between shadow-md scale-102";
+                    } else {
+                        btn.className = "w-full p-4 rounded-2xl border-4 border-slate-200 bg-slate-50 hover:bg-indigo-50 font-black text-xl text-slate-800 transition-all flex items-center justify-between shadow-sm";
+                    }
+                }
+            });
+        }
+
+        function selectMatchPicture(pictureId) {
+            if (!selectedMatchNameId) {
+                const fb = document.getElementById('match-feedback');
+                fb.className = "p-4 rounded-3xl text-center text-2xl font-black border-4 shadow-lg bg-amber-100 text-amber-900 border-amber-300";
+                fb.innerText = "👉 Tap a Name on the left first!";
+                speakText("Tap a Name on the left first!");
+                return;
+            }
+
+            if (matchedIds.includes(pictureId)) return;
+
+            const fb = document.getElementById('match-feedback');
+            fb.classList.remove('hidden');
+
+            if (selectedMatchNameId === pictureId) {
+                // Correct Match
+                matchedIds.push(pictureId);
+                const part = partsData.find(p => p.id === pictureId);
+
+                // Disable both buttons
+                const nameBtn = document.getElementById(`match-name-${pictureId}`);
+                const picBtn = document.getElementById(`match-pic-${pictureId}`);
+
+                nameBtn.className = "w-full p-4 rounded-2xl border-4 border-emerald-400 bg-emerald-100 font-black text-xl text-emerald-800 opacity-60 flex items-center justify-between";
+                nameBtn.innerHTML = `<span>✓ ${part.name}</span> <span>⭐</span>`;
+                picBtn.className = "p-4 rounded-2xl border-4 border-emerald-400 bg-emerald-100 opacity-60 flex flex-col items-center justify-center aspect-square";
+
+                fb.className = "p-4 rounded-3xl text-center text-2xl font-black border-4 shadow-lg bg-emerald-100 text-emerald-900 border-emerald-400 animate-pop";
+                fb.innerText = "🌟 Great Match! You got a Star!";
+                speakText("Great Match!");
+
+                selectedMatchNameId = null;
+
+                // Check Win
+                if (matchedIds.length === 9) {
+                    fb.className = "p-6 rounded-3xl text-center text-3xl font-black border-4 shadow-xl bg-amber-100 text-amber-900 border-amber-400 animate-pop";
+                    fb.innerText = "🎉 Wow! You matched all 9 parts perfectly!";
+                    speakText("Wow! You matched all nine parts perfectly!");
+                }
+            } else {
+                // Wrong Match (Gentle feedback)
+                fb.className = "p-4 rounded-3xl text-center text-2xl font-black border-4 shadow-lg bg-sky-100 text-sky-900 border-sky-300";
+                fb.innerText = "😊 Almost! Try another picture!";
+                speakText("Almost! Try another picture!");
+            }
+        }
+
+
+        // ================= QUIZ MODE LOGIC =================
+        function startQuiz() {
+            currentQuizIndex = 0;
+            starScore = 0;
+            document.getElementById('star-count').innerText = starScore;
+            document.getElementById('quiz-card').classList.remove('hidden');
+            document.getElementById('quiz-results-screen').classList.add('hidden');
+            loadQuizQuestion();
+        }
+
+        function loadQuizQuestion() {
+            quizAnswered = false;
+            const part = partsData[currentQuizIndex];
+            
+            document.getElementById('q-num').innerText = currentQuizIndex + 1;
+            document.getElementById('quiz-question-text').innerText = part.question;
+            
+            // Speak question automatically
+            speakText(part.question);
+
+            // Hide feedback and next button
+            const fbBox = document.getElementById('quiz-feedback-box');
+            fbBox.className = "hidden p-5 rounded-3xl text-center text-2xl font-black border-4 shadow-md";
+            document.getElementById('btn-quiz-next').classList.add('hidden');
+
+            // Render 3 Options
+            const container = document.getElementById('quiz-options-container');
+            container.innerHTML = '';
+
+            const prefixes = ['A', 'B', 'C'];
+            part.options.forEach((optText, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full p-5 rounded-3xl border-4 border-slate-200 bg-white hover:border-indigo-400 hover:bg-indigo-50 font-black text-2xl text-slate-800 transition-all flex items-center justify-between shadow-md active:scale-95";
+                btn.onclick = () => checkQuizAnswer(idx);
+                btn.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <span class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-800 flex items-center justify-center font-black text-xl border-2 border-indigo-200">${prefixes[idx]}</span>
+                        <span>${optText}</span>
+                    </div>
+                    <span class="text-2xl">👉</span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function checkQuizAnswer(selectedIndex) {
+            if (quizAnswered) return;
+            quizAnswered = true;
+
+            const part = partsData[currentQuizIndex];
+            const isCorrect = selectedIndex === part.correctAnswer;
+            const container = document.getElementById('quiz-options-container');
+            const buttons = container.querySelectorAll('button');
+            const fbBox = document.getElementById('quiz-feedback-box');
+
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === part.correctAnswer) {
+                    btn.className = "w-full p-5 rounded-3xl border-4 border-emerald-400 bg-emerald-100 font-black text-2xl text-emerald-900 flex items-center justify-between shadow-lg";
+                    btn.children[1].innerText = "⭐ Correct!";
+                } else if (idx === selectedIndex && !isCorrect) {
+                    btn.className = "w-full p-5 rounded-3xl border-4 border-sky-300 bg-sky-100 font-black text-2xl text-sky-800 flex items-center justify-between opacity-80";
+                    btn.children[1].innerText = "💭 Try again next time!";
+                } else {
+                    btn.className = "w-full p-5 rounded-3xl border-4 border-slate-100 bg-slate-50 font-bold text-2xl text-slate-400 flex items-center justify-between opacity-50";
+                }
+            });
+
+            fbBox.classList.remove('hidden');
+
+            if (isCorrect) {
+                starScore++;
+                document.getElementById('star-count').innerText = starScore;
+                fbBox.className = "p-5 rounded-3xl text-center text-2xl font-black border-4 shadow-md bg-emerald-100 text-emerald-900 border-emerald-400 animate-pop";
+                fbBox.innerHTML = `🌟 Super! You earned a star! ⭐`;
+                speakText("Super! You earned a star!");
+            } else {
+                fbBox.className = "p-5 rounded-3xl text-center text-2xl font-black border-4 shadow-md bg-sky-100 text-sky-900 border-sky-300 animate-pop";
+                fbBox.innerHTML = `😊 Good try! The right answer is ${part.options[part.correctAnswer]}.`;
+                speakText(`Good try! The right answer is ${part.options[part.correctAnswer]}.`);
+            }
+
+            // Show Next Button
+            const nextBtn = document.getElementById('btn-quiz-next');
+            nextBtn.classList.remove('hidden');
+            if (currentQuizIndex === partsData.length - 1) {
+                nextBtn.innerHTML = `See Stars! 🏆`;
+            } else {
+                nextBtn.innerHTML = `Next ➡️`;
+            }
+        }
+
+        function nextQuizQuestion() {
+            if (currentQuizIndex < partsData.length - 1) {
+                currentQuizIndex++;
+                loadQuizQuestion();
+            } else {
+                showQuizResults();
+            }
+        }
+
+        function showQuizResults() {
+            document.getElementById('quiz-card').classList.add('hidden');
+            const resultsScreen = document.getElementById('quiz-results-screen');
+            resultsScreen.classList.remove('hidden');
+
+            document.getElementById('final-stars').innerText = starScore;
+
+            // Render Star Icons
+            const starsContainer = document.getElementById('results-stars-display');
+            starsContainer.innerHTML = '';
+            for (let i = 0; i < starScore; i++) {
+                starsContainer.innerHTML += `<span class="animate-bounce">⭐</span>`;
+            }
+
+            const msg = document.getElementById('results-message');
+            if (starScore === 9) {
+                msg.innerText = "🌟 Amazing! You got ALL 9 Stars! You are a Computer Star!";
+                speakText("Amazing! You got all nine stars! You are a Computer Star!");
+            } else if (starScore >= 6) {
+                msg.innerText = "👍 Great Job! You know your computer parts!";
+                speakText("Great Job! You know your computer parts!");
+            } else {
+                msg.innerText = "😊 Nice trying! Let's play again to get more stars!";
+                speakText("Nice trying! Let's play again to get more stars!");
+            }
+        }
+
+        // Initialize App on Window Load
+        window.onload = function() {
+            renderLearnCards();
+        };
+    </script>
+</body>
+</html>
